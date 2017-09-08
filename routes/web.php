@@ -11,10 +11,11 @@
 |
 */
 
-Route::get('/', function () {
+Route::middleware('guest')->get('/', function () {
     return view('welcome');
 });
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', 'HomeController@index')->name('home')->middleware('auth');
+Route::get('/home/allocate', 'HomeController@postIndex')->middleware('auth');

@@ -3,19 +3,11 @@
 namespace Examination\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Examination\Student;
+use Examination\Room;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Show the application dashboard.
      *
@@ -24,5 +16,17 @@ class HomeController extends Controller
     public function index()
     {
         return view('home');
+    }
+
+    public function postIndex(Request $request) {
+        $rooms = Room::inRandomOrder()->get();
+        $students = Student::all();
+        foreach ($rooms as $room) {
+            $room->students()->sync($students->where('room', '=', null)->take($room->strength));
+            foreach ($students->where('room', '=', null)->take($room->strength) as $student) {
+                $student->room = $room->number;
+            }
+        }
+        return ['hi'];
     }
 }
